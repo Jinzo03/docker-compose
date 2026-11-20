@@ -2,6 +2,11 @@
 A simple Library Application using CRUD operations with 3-tier architecture (frontend, backend and relational database). 
 
 ## Stack:
+
+```
+Angular 16
+Spring Boot
+MySQL
 ```
 
 ## Run the containerized application
@@ -34,10 +39,14 @@ docker compose push
 Deploy on a Docker host with the same Compose file and image settings using `docker compose pull` followed by `docker compose up -d`. The MySQL service is built from the official image and is not pushed as an application image.
 
 The frontend sends API requests to `/api`, which its Nginx container proxies to the backend. The backend connects to MySQL using the Compose service name `mysql`.
-Angular 16 
-Spring Boot
-MySql
-```
+
+## Jenkins pipeline
+
+The root `Jenkinsfile` follows the course pipeline: build the application images, log in to Docker Hub using a Jenkins credential, push the images, then start the Compose stack in detached mode so Jenkins can continue to later stages.
+
+Configure a Jenkins credential with ID `dockerhub-credentials` and type **Username with password**. Use your Docker Hub username and an access token as the password. The Jenkins agent needs Docker Engine, the Docker Compose plugin, and permission to run Docker commands. Set `MYSQL_PASSWORD` and `MYSQL_ROOT_PASSWORD` as environment variables on the deployment agent for non-development deployments.
+
+Jenkins tags the frontend and backend images with the build number and uses the Docker Hub username from the credential. MySQL uses the official image and is not pushed to Docker Hub. The Jenkins deployment runs on the same Docker host as the build; for a separate deployment host, the deploy stage must run there after the images are pushed.
 
 ### Overview Frontend:
 1) Each Book has id, title, category, availability.

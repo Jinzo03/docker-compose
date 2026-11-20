@@ -1,0 +1,41 @@
+services:
+  frontend:
+    image: ${DOCKERHUB_USERNAME:-local}/library-frontend:${IMAGE_TAG:-latest}
+    build:
+      context: ./librarycrud-frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      backend:
+        condition: service_started
+
+  backend:
+    image: ${DOCKERHUB_USERNAME:-local}/library-backend:${IMAGE_TAG:-latest}
+    build:
+      context: .
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/librarydb?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: library
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-library_dev_password}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: librarydb
+      MYSQL_USER: library
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-library_dev_password}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_dev_password}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+volumes:
+  mysql_data:

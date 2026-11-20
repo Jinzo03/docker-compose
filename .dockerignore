@@ -1,0 +1,9 @@
+.git
+.gitignore
+.classpath
+.project
+.settings
+.vscode
+target
+librarycrud-frontend/node_modules
+librarycrud-frontend/dist

@@ -3,6 +3,37 @@ A simple Library Application using CRUD operations with 3-tier architecture (fro
 
 ## Stack:
 ```
+
+## Run the containerized application
+
+Docker Compose builds and starts the Angular frontend, Spring Boot API, and MySQL database:
+
+```sh
+docker compose up --build
+```
+
+Open the application at <http://localhost:8081>. MySQL data is stored in the `mysql_data` named volume and survives container recreation. To stop the services, run `docker compose down`; to also delete the database volume, run `docker compose down -v`.
+
+The Compose file uses development-only default database passwords. For a shared or deployed environment, create a `.env` file and set `MYSQL_PASSWORD` and `MYSQL_ROOT_PASSWORD` to strong values. To prepare image names for Docker Hub, also set `DOCKERHUB_USERNAME` and optionally `IMAGE_TAG`:
+
+```dotenv
+DOCKERHUB_USERNAME=your-dockerhub-username
+IMAGE_TAG=latest
+MYSQL_PASSWORD=change-this-password
+MYSQL_ROOT_PASSWORD=change-this-root-password
+```
+
+Build the images and sign in to Docker Hub before pushing:
+
+```sh
+docker compose build
+docker login
+docker compose push
+```
+
+Deploy on a Docker host with the same Compose file and image settings using `docker compose pull` followed by `docker compose up -d`. The MySQL service is built from the official image and is not pushed as an application image.
+
+The frontend sends API requests to `/api`, which its Nginx container proxies to the backend. The backend connects to MySQL using the Compose service name `mysql`.
 Angular 16 
 Spring Boot
 MySql

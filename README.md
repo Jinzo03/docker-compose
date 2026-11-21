@@ -19,6 +19,8 @@ docker compose up --build
 
 Open the application at <http://localhost:8081>. MySQL data is stored in the `mysql_data` named volume and survives container recreation. To stop the services, run `docker compose down`; to also delete the database volume, run `docker compose down -v`.
 
+MySQL is published on port `3306` for connections from a database client such as MySQL Workbench. Connect to host `localhost` (or the Docker host's IP when connecting remotely), port `3306`, database `librarydb`, and user `library`. Use the value of `MYSQL_PASSWORD` from `.env`, or the development default `library_dev_password` if it is unset.
+
 The Compose file uses development-only default database passwords. For a shared or deployed environment, create a `.env` file and set `MYSQL_PASSWORD` and `MYSQL_ROOT_PASSWORD` to strong values. To prepare image names for Docker Hub, also set `DOCKERHUB_USERNAME` and optionally `IMAGE_TAG`:
 
 ```dotenv
